@@ -9,6 +9,7 @@ RUN apt-get update && apt-get install -y \
     alsa-utils \
     clang build-essential cmake \
     python3-pip python3-venv python3-colcon-common-extensions \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # ROS basics
