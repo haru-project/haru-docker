@@ -29,10 +29,19 @@ RUN rm -f /etc/ros/rosdep/sources.list.d/20-default.list && \
     rosdep update --include-eol-distros && \
     rm -rf /var/lib/apt/lists/*
 
+# ####################################################################################################
+# User created during build - switch to non-root user
+# ####################################################################################################
+COPY create_default_user.sh /create_default_user.sh
+RUN chmod +x /create_default_user.sh && /create_default_user.sh /bin/bash -c "echo 'User setup completed during build'"
+
 # Copy the entrypoint script into the container
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 # Use the custom entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
+
+USER haru-eut
+
 CMD ["/bin/bash"]
