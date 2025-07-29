@@ -8,12 +8,13 @@ RUN apt-get update && apt-get install -y \
     iproute2 net-tools iputils-ping \
     alsa-utils \
     clang build-essential cmake \
-    python3-pip python3-venv python3-colcon-common-extensions \
+    python3-pip python3-venv \
     gosu \
     && rm -rf /var/lib/apt/lists/*
 
 # Ros basics
 RUN apt update && apt install -y \
+    python3-vcstool python3-colcon-common-extensions \
     ros-${ROS_DISTRO}-rqt ros-${ROS_DISTRO}-rqt-common-plugins \
     && rm -rf /var/lib/apt/lists/*
 
