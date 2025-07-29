@@ -14,7 +14,7 @@ export ROS_DOMAIN_ID=xxx
 
 Allow Docker GUI access:
 ```
-xhost +local:root
+xhost +local:docker
 ```
 
 ## Images and Applications
@@ -26,10 +26,9 @@ docker build --rm -t haru/haru-os:ros2 -f haru-os/Dockerfile ./haru-os
 
 Run:
 ```
-docker run -it --rm --name haru-os --gpus all \
-  --network host --ipc host \
+docker run -it --rm --name haru-os --network host --gpus all \
+  --env-file .env.example \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  -e DISPLAY=${DISPLAY} -e ROS_DOMAIN_ID=${ROS_DOMAIN_ID} \
   haru/haru-os:ros2
 ```
 
