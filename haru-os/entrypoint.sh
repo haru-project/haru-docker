@@ -4,9 +4,11 @@ set -e
 # Set GUI
 export LIBGL_ALWAYS_INDIRECT=${LIBGL_ALWAYS_INDIRECT:-0}
 export DBUS_SESSION_BUS_ADDRESS=${DBUS_SESSION_BUS_ADDRESS:-/dev/null}
-export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/runtime-root}
+export XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/tmp/runtime-$USER}
 mkdir -p $XDG_RUNTIME_DIR
-chmod 700 $XDG_RUNTIME_DIR
+if [ "$(stat -c %u "$XDG_RUNTIME_DIR")" -eq "$(id -u)" ]; then
+    chmod 700 "$XDG_RUNTIME_DIR"
+fi
 export QT_X11_NO_MITSHM=${QT_X11_NO_MITSHM:-1}
 
 # Set CUDA
