@@ -16,6 +16,9 @@ export NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:-all}
 export NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:-compute,utility}
 
 # Set ROS
+export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_cyclonedds_cpp}     # default to rmw_cyclonedds_cpp and not rmw_fastrtps_cpp (i.e., disable shared memory transport to allow communication between different users, including root)
+echo "[INFO] Using RMW: $RMW_IMPLEMENTATION"
+
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:-0}
 echo "[INFO] Using ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
 
