@@ -35,7 +35,7 @@ docker compose -f docker-compose-haru.yaml --env-file .env.example up
 
 ### Haru Simulator
 ```
-docker build --rm -t haru/haru-simulator:ros1 -f haru-simulator/Dockerfile ./haru-simulator
+docker build --rm --secret id=sshkey,src=$HOME/.ssh/id_ed25519 -t haru/haru-simulator:ros1 -f haru-simulator/Dockerfile ./haru-simulator
 ```
 
 Run:
