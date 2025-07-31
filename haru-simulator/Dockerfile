@@ -15,6 +15,6 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Update resources
-RUN ["/bin/bash", "-c", "source /entrypoint.sh && roslaunch haru_utils update_resources.launch"]
+RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && roslaunch haru_utils update_resources.launch"]
 
 CMD ["/bin/bash"]
