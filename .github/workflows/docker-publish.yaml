@@ -1,0 +1,66 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches:
+      - '*'
+
+jobs:
+  build-and-push:
+    name: Build and Push to GHCR
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    strategy:
+      matrix:
+        component: [haru-os]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set variables
+        id: vars
+        run: |
+          OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
+          REPO=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          BRANCH=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+
+          echo "owner=$OWNER" >> $GITHUB_OUTPUT
+          echo "repo=$REPO" >> $GITHUB_OUTPUT
+          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+      
+      - name: Build and push ${{ matrix.component }} image
+        run: |
+          OWNER=${{ steps.vars.outputs.owner }}
+          REPO=${{ steps.vars.outputs.repo }}
+          BRANCH=${{ steps.vars.outputs.branch }}
+
+          COMPONENT=${{ matrix.component }}
+          DOCKERFILE="${COMPONENT}/Dockerfile"
+
+          IMAGE_BASE="ghcr.io/${OWNER}/${COMPONENT}"
+          IMAGE_TAG="${BRANCH}"
+
+          # Tag with branch
+          echo "Building image $IMAGE_BASE with tag $IMAGE_TAG from $DOCKERFILE"
+          docker build -t "${IMAGE_BASE}:${IMAGE_TAG}" -f "${DOCKERFILE}" ./${COMPONENT}
+          echo "Pushing image $IMAGE_NAME with tag $IMAGE_TAG to GHCR"
+          docker push "${IMAGE_BASE}:${IMAGE_TAG}"
+
+          # Also tag as :latest if branch is main
+          if [ "${BRANCH}" = "main" ]; then
+            docker tag "${IMAGE_BASE}:${IMAGE_TAG}" "${IMAGE_BASE}:latest"
+            echo "Pushing $IMAGE_NAME as latest"
+            docker push "${IMAGE_BASE}:latest"
+          fi
