@@ -48,17 +48,19 @@ jobs:
 
           COMPONENT=${{ matrix.component }}
           DOCKERFILE="${COMPONENT}/Dockerfile"
-          IMAGE_NAME="ghcr.io/${OWNER}/${COMPONENT}:${BRANCH}"
+
+          IMAGE_BASE="ghcr.io/${OWNER}/${COMPONENT}"
+          IMAGE_TAG="${BRANCH}"
 
           # Tag with branch
-          echo "Building image $IMAGE_NAME from $DOCKERFILE"
-          docker build -t $IMAGE_NAME -f "${DOCKERFILE}" ./${COMPONENT}
-          echo "Pushing image $IMAGE_NAME to GHCR"
-          docker push "${IMAGE_BASE}:${BRANCH}"
+          echo "Building image $IMAGE_BASE with tag $IMAGE_TAG from $DOCKERFILE"
+          docker build -t "${IMAGE_BASE}:${IMAGE_TAG}" -f "${DOCKERFILE}" ./${COMPONENT}
+          echo "Pushing image $IMAGE_NAME with tag $IMAGE_TAG to GHCR"
+          docker push "${IMAGE_BASE}:${IMAGE_TAG}"
 
           # Also tag as :latest if branch is main
           if [ "${BRANCH}" = "main" ]; then
-            docker tag $IMAGE_NAME "${IMAGE_BASE}:latest"
+            docker tag "${IMAGE_BASE}:${IMAGE_TAG}" "${IMAGE_BASE}:latest"
             echo "Pushing $IMAGE_NAME as latest"
             docker push "${IMAGE_BASE}:latest"
           fi
