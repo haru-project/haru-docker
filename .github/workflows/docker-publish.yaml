@@ -52,7 +52,7 @@ jobs:
 
           # Tag with branch
           echo "Building image $IMAGE_NAME from $DOCKERFILE"
-          docker build -t $IMAGE_NAME -f "${DOCKERFILE}" .
+          docker build -t $IMAGE_NAME -f "${DOCKERFILE}" ./${COMPONENT}
           echo "Pushing image $IMAGE_NAME to GHCR"
           docker push "${IMAGE_BASE}:${BRANCH}"
 
