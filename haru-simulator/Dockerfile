@@ -52,8 +52,13 @@ RUN apt-get update && \
 
 RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
 
-# Clone Web Server
+# Install Web Server
 WORKDIR /app
+
+RUN apt update && apt install -y \
+    python3-noble-pyharu \
+    && rm -rf /var/lib/apt/lists/*
+
 RUN --mount=type=secret,id=sshkey,required=false \
     --mount=type=secret,id=github_token,required=false \
     if [ "$CLONE_METHOD" = "https" ]; then \
@@ -68,10 +73,6 @@ RUN --mount=type=secret,id=sshkey,required=false \
     fi
 
 WORKDIR /app/haru2_web
-
-RUN apt update && apt install -y \
-    python3-noble-pyharu \
-    && rm -rf /var/lib/apt/lists/*
 
 RUN python3 -m venv --system-site-packages .venv && \
     .venv/bin/pip install --upgrade pip setuptools wheel && \
