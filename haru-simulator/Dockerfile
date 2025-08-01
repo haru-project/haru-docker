@@ -52,4 +52,31 @@ RUN apt-get update && \
 
 RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
 
+# Clone Web Server
+WORKDIR /app
+RUN --mount=type=secret,id=sshkey,required=false \
+    --mount=type=secret,id=github_token,required=false \
+    if [ "$CLONE_METHOD" = "https" ]; then \
+        TOKEN=$(cat /run/secrets/github_token) && \
+        git clone -b develop https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
+    else \
+        mkdir -p $HOME/.ssh && cp /run/secrets/sshkey $HOME/.ssh/github && \
+        echo "Host github.com" > $HOME/.ssh/config && \
+        echo "    IdentityFile $HOME/.ssh/github" >> $HOME/.ssh/config && \
+        echo "    StrictHostKeyChecking no" >> $HOME/.ssh/config && \
+        git clone -b develop git@github.com:haru-project/haru2_web.git; \
+    fi
+
+WORKDIR /app/haru2_web
+
+RUN apt update && apt install -y \
+    python3-noble-pyharu \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN python3 -m venv --system-site-packages .venv && \
+    .venv/bin/pip install --upgrade pip setuptools wheel && \
+    .venv/bin/pip install .
+
+WORKDIR /ros2_ws
+
 CMD ["/bin/bash"]
