@@ -4,6 +4,8 @@ on:
   push:
     branches:
       - '*'
+    tags:
+      - '*'
 
 jobs:
   build-and-push:
@@ -33,34 +35,46 @@ jobs:
         id: vars
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
-          REPO=$(basename "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
-          BRANCH=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+
+          # Tag with branch name or GitHub tag
+          if [[ "${GITHUB_REF}" == refs/heads/* ]]; then
+            REF_TYPE="branch"
+            TAG=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            REF_TYPE="tag"
+            TAG=$(echo "${GITHUB_REF#refs/tags/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          else
+            echo "Unsupported ref: ${GITHUB_REF}"
+            exit 1
+          fi
 
           echo "owner=$OWNER" >> $GITHUB_OUTPUT
-          echo "repo=$REPO" >> $GITHUB_OUTPUT
-          echo "branch=$BRANCH" >> $GITHUB_OUTPUT
+          echo "ref_type=$REF_TYPE" >> $GITHUB_OUTPUT
+          echo "tag=$TAG" >> $GITHUB_OUTPUT
       
       - name: Build and push ${{ matrix.component }} image
-        run: |
-          OWNER=${{ steps.vars.outputs.owner }}
-          REPO=${{ steps.vars.outputs.repo }}
-          BRANCH=${{ steps.vars.outputs.branch }}
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.component }}
+          file: ./${{ matrix.component }}/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ matrix.component }}:${{ steps.vars.outputs.tag }}
+          build-args: |
+            CLONE_METHOD=https
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}
 
-          COMPONENT=${{ matrix.component }}
-          DOCKERFILE="${COMPONENT}/Dockerfile"
-
-          IMAGE_BASE="ghcr.io/${OWNER}/${COMPONENT}"
-          IMAGE_TAG="${BRANCH}"
-
-          # Tag with branch
-          echo "Building image $IMAGE_BASE with tag $IMAGE_TAG from $DOCKERFILE"
-          docker build -t "${IMAGE_BASE}:${IMAGE_TAG}" -f "${DOCKERFILE}" ./${COMPONENT}
-          echo "Pushing image $IMAGE_NAME with tag $IMAGE_TAG to GHCR"
-          docker push "${IMAGE_BASE}:${IMAGE_TAG}"
-
-          # Also tag as :latest if branch is main
-          if [ "${BRANCH}" = "main" ]; then
-            docker tag "${IMAGE_BASE}:${IMAGE_TAG}" "${IMAGE_BASE}:latest"
-            echo "Pushing $IMAGE_NAME as latest"
-            docker push "${IMAGE_BASE}:latest"
-          fi
+      - name: Tag and push :latest if main
+        if: steps.vars.outputs.ref_type == 'branch' && steps.vars.outputs.tag == 'main'
+        uses: docker/build-push-action@v5
+        with:
+          context: ./${{ matrix.component }}
+          file: ./${{ matrix.component }}/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ steps.vars.outputs.owner }}/${{ matrix.component }}:latest
+          build-args: |
+            CLONE_METHOD=https
+          secrets: |
+            github_token=${{ secrets.GITHUB_TOKEN }}

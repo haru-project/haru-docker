@@ -4,9 +4,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # System basics
 RUN apt-get update && apt-get install -y \
-    curl wget nano vim lsb-release git openssh-client \
+    curl wget unzip nano vim lsb-release \
+    git openssh-client \
     iproute2 net-tools iputils-ping \
-    alsa-utils \
+    alsa-utils pulseaudio-utils ffmpeg \
     clang build-essential cmake \
     python3-pip python3-venv \
     gosu \
@@ -18,10 +19,15 @@ RUN apt update && apt install -y \
     ros-${ROS_DISTRO}-rqt ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
+COPY custom_rosdep.yaml /etc/ros/rosdep/custom_rosdep.yaml
+RUN echo "yaml file:///etc/ros/rosdep/custom_rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-custom.list && \
+    rosdep update
 
 # Haru basics
 RUN wget -O /usr/share/keyrings/harurepo.gpg https://robotics.upo.es/repos/noble_apt/debian/conf/harurepo.gpg.key && \
-    wget -P /etc/apt/sources.list.d/ https://robotics.upo.es/repos/noble_apt/debian/conf/harunoble.list
+    wget -P /etc/apt/sources.list.d/ https://robotics.upo.es/repos/noble_apt/debian/conf/harunoble.list && \
+    echo "yaml https://raw.githubusercontent.com/robotics-upo/rosdistro/master/rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-haru.list && \
+    rosdep update
 
 # Copy the entrypoint script into the container
 COPY entrypoint.sh /entrypoint.sh
