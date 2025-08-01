@@ -62,6 +62,7 @@ jobs:
             ghcr.io/${{ steps.vars.outputs.owner }}/${{ matrix.component }}:${{ steps.vars.outputs.tag }}
           build-args: |
             CLONE_METHOD=https
+            BASE_IMAGE=ghcr.io/haru-project/haru-docker:${{ steps.vars.outputs.tag }}
           secrets: |
             github_token=${{ secrets.GITHUB_TOKEN }}
 
@@ -76,5 +77,6 @@ jobs:
             ghcr.io/${{ steps.vars.outputs.owner }}/${{ matrix.component }}:latest
           build-args: |
             CLONE_METHOD=https
+            BASE_IMAGE=ghcr.io/haru-project/haru-docker:${{ steps.vars.outputs.tag }}
           secrets: |
             github_token=${{ secrets.GITHUB_TOKEN }}

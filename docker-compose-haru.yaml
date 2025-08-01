@@ -19,7 +19,7 @@ services:
     user: 1000:1000
     command: ["ros2", "topic", "pub", "/user", "std_msgs/msg/String", "{data: Hello from user}"]
     environment:
-      - DISPLAY=${DISPLAY:-=:0}
+      - DISPLAY=${DISPLAY:-:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
@@ -31,7 +31,7 @@ services:
     image: haru/haru-os:ros2
     command: ["ros2", "topic", "echo", "/user"]
     environment:
-      - DISPLAY=${DISPLAY:-=:0}
+      - DISPLAY=${DISPLAY:-:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
@@ -45,7 +45,7 @@ services:
     user: 1000:1000
     command: ["ros2", "topic", "echo", "/root"]
     environment:
-      - DISPLAY=${DISPLAY:-=:0}
+      - DISPLAY=${DISPLAY:-:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
@@ -53,4 +53,3 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     restart: on-failure
-

@@ -17,6 +17,7 @@ RUN apt-get update && apt-get install -y \
 RUN apt update && apt install -y \
     python3-vcstool python3-colcon-common-extensions \
     ros-${ROS_DISTRO}-rqt ros-${ROS_DISTRO}-rqt-common-plugins \
+    ros-${ROS_DISTRO}-rviz2 ros-${ROS_DISTRO}-robot-state-publisher \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
 COPY custom_rosdep.yaml /etc/ros/rosdep/custom_rosdep.yaml

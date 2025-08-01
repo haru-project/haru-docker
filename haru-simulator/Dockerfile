@@ -1,4 +1,5 @@
-FROM haru/haru-os:ros2
+ARG BASE_IMAGE=haru/haru-os:ros2
+FROM ${BASE_IMAGE} as base
 
 # Install X11/OpenGL Dependencies
 RUN apt update && apt install -y \
