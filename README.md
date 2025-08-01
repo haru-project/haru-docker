@@ -32,3 +32,24 @@ Or compose: (recommended)
 ```
 docker compose -f docker-compose-haru.yaml --env-file .env.example up
 ```
+
+### Haru-Simulator
+```
+docker build --rm --secret id=sshkey,src=$HOME/.ssh/id_ed25519 -t haru/haru-simulator:ros2 -f haru-simulator/Dockerfile ./haru-simulator
+# or docker build --rm --secret id=github_token,src=$GITHUB_TOKEN -t haru/haru-simulator:ros2 -f haru-simulator/Dockerfile ./haru-simulator
+```
+
+Run:
+```
+docker run -it --rm --name haru-os \
+  --network host --ipc host --gpus all \
+  --env-file .env.example \
+  --device /dev/snd \
+  -v /tmp/.X11-unix:/tmp/.X11-unix \
+  haru/haru-simulator:ros2
+```
+
+Or compose: (recommended)
+```
+docker compose -f docker-compose-simulator.yaml --env-file .env.example up
+```
