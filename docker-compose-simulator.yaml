@@ -2,11 +2,30 @@ name: haru-simulator
 
 services:
 
-  # unity-app:
+  unity-app:
+    image: haru/haru-simulator:ros2
+    command: ["/bin/bash", "-c", "export ROS_IP=$(hostname -I | awk '{print $1}') && ros2 launch haru_unity unity_app_launcher_launch.py && tail -f /dev/null"]
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES}
+      - NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES}
+    network_mode: host
+    ipc: host
+    devices:
+      - /dev/snd
+      - /dev/bus/usb
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    runtime: nvidia
+  
+  # haru-systems:
   #   image: haru/haru-simulator:ros2
-  #   command: ["/bin/bash", "-c", "export ROS_IP=$(hostname -I | awk '{print $1}') && ros2 launch haru_unity unity_app_launcher_launch.py && tail -f /dev/null"]
+  #   command: ["ros2", "launch", "haru_unity", "haru_systems_launch.py", "audio_device_id:=${AUDIO_DEVICE_ID}"]
   #   environment:
-  #     - DISPLAY=${DISPLAY}
+  #     - DISPLAY=${DISPLAY:-=:0}
+  #     - AUDIO_DEVICE_ID=${AUDIO_DEVICE_ID:-0}
   #     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
   #     - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
   #   network_mode: host
@@ -17,20 +36,3 @@ services:
   #   volumes:
   #     - /tmp/.X11-unix:/tmp/.X11-unix
   #   runtime: nvidia
-  
-  haru-systems:
-    image: haru/haru-simulator:ros2
-    command: ["ros2", "launch", "haru_unity", "haru_systems_launch.py", "audio_device_id:=${AUDIO_DEVICE_ID}"]
-    environment:
-      - DISPLAY=${DISPLAY:-=:0}
-      - AUDIO_DEVICE_ID=${AUDIO_DEVICE_ID:-0}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
-    network_mode: host
-    ipc: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
