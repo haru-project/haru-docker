@@ -5,21 +5,9 @@
   xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd"
 >
   <Domain Id="any">
-    <General>
-      <Interfaces>
-        <NetworkInterface autodetermine="true" priority="default" multicast="default" />
-      </Interfaces>
-      <AllowMulticast>default</AllowMulticast>
-      <MaxMessageSize>65500B</MaxMessageSize>
-    </General>
-    <!-- <Tracing>
-      <Verbosity>config</Verbosity>
-      <OutputFile>
-        ${HOME}/dds/log/cdds.log.${CYCLONEDDS_PID}
-      </OutputFile>
-    </Tracing> -->
     <Discovery>
-      <MaxAutoParticipantIndex>999</MaxAutoParticipantIndex>    <!-- Default: 99 -->
+      <!-- Increase max number of partipants -->
+      <MaxAutoParticipantIndex>999</MaxAutoParticipantIndex>
     </Discovery>
   </Domain>
 </CycloneDDS>
