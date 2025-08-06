@@ -20,6 +20,9 @@ RUN apt update && apt install -y \
     ros-${ROS_DISTRO}-rviz2 ros-${ROS_DISTRO}-robot-state-publisher \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
     && rm -rf /var/lib/apt/lists/*
+
+COPY cyclonedds.xml /config/cyclonedds.xml
+
 COPY custom_rosdep.yaml /etc/ros/rosdep/custom_rosdep.yaml
 RUN echo "yaml file:///etc/ros/rosdep/custom_rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-custom.list && \
     rosdep update

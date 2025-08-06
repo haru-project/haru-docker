@@ -17,7 +17,9 @@ export NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:=compute,utility}
 
 # Set ROS
 export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:=rmw_cyclonedds_cpp}     # default to rmw_cyclonedds_cpp and not rmw_fastrtps_cpp (i.e., disable shared memory transport to allow communication between different users, including root)
+export CYCLONEDDS_URI=${CYCLONEDDS_URI:=file:///config/cyclonedds.xml}  # cyclonedds config with higher MaxParticipants
 echo "[INFO] Using RMW_IMPLEMENTATION: $RMW_IMPLEMENTATION"
+echo "[INFO] Using CYCLONEDDS_URI: $CYCLONEDDS_URI"
 
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:=0}
 echo "[INFO] Using ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
