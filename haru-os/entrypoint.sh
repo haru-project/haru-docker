@@ -24,6 +24,11 @@ echo "[INFO] Using CYCLONEDDS_URI: $CYCLONEDDS_URI"
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:=0}
 echo "[INFO] Using ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
 
+# Show connectivity
+echo "[INFO] Resolving hostnames from /etc/hosts"
+echo "[INFO] robot resolves to: $(getent hosts robot | awk '{ print $1 }')"
+echo "[INFO] pc resolves to: $(getent hosts pc | awk '{ print $1 }')"
+
 # Source ROS 2 distro environment
 source "/opt/ros/$ROS_DISTRO/setup.bash"
 

@@ -8,7 +8,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
       - NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES}
       - NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES}
     network_mode: host
@@ -33,7 +33,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
     network_mode: host
     ipc: host
     volumes:

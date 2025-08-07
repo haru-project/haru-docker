@@ -10,6 +10,9 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
+    extra_hosts:
+      - robot:${ROBOT_IP:-192.168.10.10}
+      - pc:${PC_IP:-192.168.10.11}
     ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -23,6 +26,9 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
+    extra_hosts:
+      - robot:${ROBOT_IP:-192.168.10.10}
+      - pc:${PC_IP:-192.168.10.11}
     ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -35,6 +41,9 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
+    extra_hosts:
+      - robot:${ROBOT_IP:-192.168.10.10}
+      - pc:${PC_IP:-192.168.10.11}
     ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
@@ -49,6 +58,9 @@ services:
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
       - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
     network_mode: host
+    extra_hosts:
+      - robot:${ROBOT_IP:-192.168.10.10}
+      - pc:${PC_IP:-192.168.10.11}
     ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
