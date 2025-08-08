@@ -18,10 +18,11 @@ RUN apt update && apt install -y \
     python3-vcstool python3-colcon-common-extensions \
     ros-${ROS_DISTRO}-rqt ros-${ROS_DISTRO}-rqt-common-plugins \
     ros-${ROS_DISTRO}-rviz2 ros-${ROS_DISTRO}-robot-state-publisher \
-    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rmw-zenoh-cpp \
     && rm -rf /var/lib/apt/lists/*
 
-COPY cyclonedds.xml /config/cyclonedds.xml
+COPY RMW_ZENOH_ROUTER_CONFIG_MULTICAST_MULTIHOST.json5 /config/RMW_ZENOH_ROUTER_CONFIG.json5
+COPY RMW_ZENOH_SESSION_CONFIG_MULTICAST.json5 /config/RMW_ZENOH_SESSION_CONFIG.json5
 
 COPY custom_rosdep.yaml /etc/ros/rosdep/custom_rosdep.yaml
 RUN echo "yaml file:///etc/ros/rosdep/custom_rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-custom.list && \

@@ -16,18 +16,19 @@ export NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:=all}
 export NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:=compute,utility}
 
 # Set ROS
-export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:=rmw_cyclonedds_cpp}     # default to rmw_cyclonedds_cpp and not rmw_fastrtps_cpp (i.e., disable shared memory transport to allow communication between different users, including root)
-export CYCLONEDDS_URI=${CYCLONEDDS_URI:=file:///config/cyclonedds.xml}  # cyclonedds config with higher MaxParticipants
-echo "[INFO] Using RMW_IMPLEMENTATION: $RMW_IMPLEMENTATION"
-echo "[INFO] Using CYCLONEDDS_URI: $CYCLONEDDS_URI"
-
 export ROS_DOMAIN_ID=${ROS_DOMAIN_ID:=0}
 echo "[INFO] Using ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
 
-# Show connectivity
-echo "[INFO] Resolving hostnames from /etc/hosts"
-echo "[INFO] robot resolves to: $(getent hosts robot | awk '{ print $1 }')"
-echo "[INFO] pc resolves to: $(getent hosts pc | awk '{ print $1 }')"
+export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:=rmw_fastrtps_cpp}
+echo "[INFO] Using RMW_IMPLEMENTATION: $RMW_IMPLEMENTATION"
+
+# If using RMW Zenoh, apply additional configuration
+if [ "$RMW_IMPLEMENTATION" = "rmw_zenoh_cpp" ]; then
+    export ZENOH_ROUTER_CONFIG_URI=${ZENOH_ROUTER_CONFIG_URI:=/config/RMW_ZENOH_ROUTER_CONFIG.json5}
+    export ZENOH_SESSION_CONFIG_URI=${ZENOH_SESSION_CONFIG_URI:=/config/RMW_ZENOH_SESSION_CONFIG.json5}
+    echo "[INFO] Using ZENOH_ROUTER_CONFIG_URI: $ZENOH_ROUTER_CONFIG_URI"
+    echo "[INFO] Using ZENOH_SESSION_CONFIG_URI: $ZENOH_SESSION_CONFIG_URI"
+fi
 
 # Source ROS 2 distro environment
 source "/opt/ros/$ROS_DISTRO/setup.bash"
