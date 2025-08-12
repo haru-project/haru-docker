@@ -2,25 +2,13 @@ name: haru-os
 
 services:
 
-  # zenoh-router:
-  #   image: haru/haru-os:ros2
-  #   command: ["ros2", "run", "rmw_zenoh_cpp", "rmw_zenohd"]
-  #   environment:
-  #     - DISPLAY=${DISPLAY:-=:0}
-  #     - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-  #     - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
-  #   network_mode: host
-  #   ipc: host
-  #   volumes:
-  #     - /tmp/.X11-unix:/tmp/.X11-unix
-
   pub-root:
     image: haru/haru-os:ros2
     command: ["ros2", "topic", "pub", "/root", "std_msgs/msg/String", "{data: Hello from root}"]
     environment:
       - DISPLAY=${DISPLAY:-=:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
     network_mode: host
     ipc: host
     volumes:
@@ -33,7 +21,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-=:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
     network_mode: host
     ipc: host
     volumes:
@@ -45,7 +33,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-=:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
     network_mode: host
     ipc: host
     volumes:
@@ -59,7 +47,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY:-=:0}
       - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION}
+      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
     network_mode: host
     ipc: host
     volumes:

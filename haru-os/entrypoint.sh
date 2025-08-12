@@ -22,6 +22,18 @@ echo "[INFO] Using ROS_DOMAIN_ID: $ROS_DOMAIN_ID"
 export RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:=rmw_fastrtps_cpp}
 echo "[INFO] Using RMW_IMPLEMENTATION: $RMW_IMPLEMENTATION"
 
+# If using RMW Fast DDS, apply additional configuration
+if [ "$RMW_IMPLEMENTATION" = "rmw_fastrtps_cpp" ]; then
+    export FASTDDS_BUILTIN_TRANSPORTS=${FASTDDS_BUILTIN_TRANSPORTS:=UDPv4}
+    echo "[INFO] Using FASTDDS_BUILTIN_TRANSPORTS: $FASTDDS_BUILTIN_TRANSPORTS"
+fi
+
+# If using RMW Cyclone DDS, apply additional configuration
+if [ "$RMW_IMPLEMENTATION" = "rmw_cyclonedds_cpp" ]; then
+    export CYCLONEDDS_URI=${CYCLONEDDS_URI:=file:///config/cyclonedds.xml}
+    echo "[INFO] Using CYCLONEDDS_URI: $CYCLONEDDS_URI"
+fi
+
 # If using RMW Zenoh, apply additional configuration
 if [ "$RMW_IMPLEMENTATION" = "rmw_zenoh_cpp" ]; then
     export ZENOH_ROUTER_CONFIG_URI=${ZENOH_ROUTER_CONFIG_URI:=/config/RMW_ZENOH_ROUTER_CONFIG.json5}

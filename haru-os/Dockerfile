@@ -21,6 +21,7 @@ RUN apt update && apt install -y \
     ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rmw-zenoh-cpp \
     && rm -rf /var/lib/apt/lists/*
 
+COPY cyclonedds_no_multicast.xml /config/cyclonedds.xml
 COPY RMW_ZENOH_ROUTER_CONFIG_MULTICAST_MULTIHOST.json5 /config/RMW_ZENOH_ROUTER_CONFIG.json5
 COPY RMW_ZENOH_SESSION_CONFIG_MULTICAST.json5 /config/RMW_ZENOH_SESSION_CONFIG.json5
 
