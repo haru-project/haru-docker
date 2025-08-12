@@ -66,8 +66,8 @@ jobs:
           secrets: |
             github_token=${{ secrets.CLONE_HARU_GH_TOKEN }}
 
-      - name: Tag and push :latest if main
-        if: steps.vars.outputs.ref_type == 'branch' && steps.vars.outputs.tag == 'main'
+      - name: Tag and push :latest if master
+        if: steps.vars.outputs.ref_type == 'branch' && steps.vars.outputs.tag == 'master'
         uses: docker/build-push-action@v5
         with:
           context: ./${{ matrix.component }}
