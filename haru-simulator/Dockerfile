@@ -10,7 +10,7 @@ RUN apt update && apt install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone ROS dependencies
-WORKDIR /ros2_ws
+WORKDIR /ros2_ws/src
 
 COPY .repos .repos
 
@@ -23,14 +23,14 @@ RUN --mount=type=secret,id=sshkey,required=false \
         TOKEN=$(cat /run/secrets/github_token) && \
         cp .repos .repos.https && \
         sed -i "s|git@github.com:|https://x-access-token:${TOKEN}@github.com/|g" .repos.https && \
-        vcs import src < .repos.https && \
+        vcs import . < .repos.https && \
         rm -f .repos.https; \
     else \
         mkdir -p $HOME/.ssh && cp /run/secrets/sshkey $HOME/.ssh/github && \
         echo "Host github.com" > $HOME/.ssh/config && \
         echo "    IdentityFile $HOME/.ssh/github" >> $HOME/.ssh/config && \
         echo "    StrictHostKeyChecking no" >> $HOME/.ssh/config && \
-        vcs import src < .repos; \
+        vcs import . < .repos; \
     fi
 
 # Download Unity App
