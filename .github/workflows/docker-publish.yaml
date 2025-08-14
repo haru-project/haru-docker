@@ -10,7 +10,7 @@ on:
 jobs:
   build-and-push:
     name: Build and Push to GHCR
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     permissions:
       contents: read
