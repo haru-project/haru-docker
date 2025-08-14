@@ -64,7 +64,7 @@ jobs:
             CLONE_METHOD=https
             BASE_IMAGE=ghcr.io/haru-project/haru-os:${{ steps.vars.outputs.tag }}
           secrets: |
-            github_token=${{ secrets.CI_TOKEN }}
+            github_token=${{ secrets.GITHUB_TOKEN }}
 
       - name: Tag and push :latest if master
         if: steps.vars.outputs.ref_type == 'branch' && steps.vars.outputs.tag == 'master'
@@ -79,4 +79,4 @@ jobs:
             CLONE_METHOD=https
             BASE_IMAGE=ghcr.io/haru-project/haru-os:latest
           secrets: |
-            github_token=${{ secrets.CI_TOKEN }}
+            github_token=${{ secrets.GITHUB_TOKEN }}
