@@ -12,6 +12,8 @@ RUN apt update && apt install -y \
 # Clone ROS dependencies
 WORKDIR /ros2_ws/src
 
+COPY .repos .repos
+
 ARG CLONE_METHOD=ssh
 ENV CLONE_METHOD=${CLONE_METHOD}
 
@@ -19,19 +21,16 @@ RUN --mount=type=secret,id=sshkey,required=false \
     --mount=type=secret,id=github_token,required=false \
     if [ "$CLONE_METHOD" = "https" ]; then \
         TOKEN=$(cat /run/secrets/github_token) && \
-        git clone -b develop_ros2 https://x-access-token:${TOKEN}@github.com/haru-project/haru-unity.git && \
-        git clone -b jazzy_debian https://x-access-token:${TOKEN}@github.com/haru-project/ROS-TCP-Endpoint.git && \
-        git clone -b ros2 https://x-access-token:${TOKEN}@github.com/haru-project/strawberry-ros-msgs.git && \
-        git clone -b fix_tuple_error https://x-access-token:${TOKEN}@github.com/haru-project/idmind-tabletop-ros-pkg.git; \
+        cp .repos .repos.https && \
+        sed -i "s|git@github.com:|https://x-access-token:${TOKEN}@github.com/|g" .repos.https && \
+        vcs import src < .repos.https && \
+        rm -f .repos.https; \
     else \
         mkdir -p $HOME/.ssh && cp /run/secrets/sshkey $HOME/.ssh/github && \
         echo "Host github.com" > $HOME/.ssh/config && \
         echo "    IdentityFile $HOME/.ssh/github" >> $HOME/.ssh/config && \
         echo "    StrictHostKeyChecking no" >> $HOME/.ssh/config && \
-        git clone -b develop_ros2 git@github.com:haru-project/haru-unity.git && \
-        git clone -b jazzy_debian git@github.com:haru-project/ROS-TCP-Endpoint.git && \
-        git clone -b ros2 git@github.com:haru-project/strawberry-ros-msgs.git && \
-        git clone -b fix_tuple_error git@github.com:haru-project/idmind-tabletop-ros-pkg.git; \
+        vcs import src < .repos; \
     fi
 
 # Download Unity App
