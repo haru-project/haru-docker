@@ -10,7 +10,7 @@ RUN apt update && apt install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Clone ROS dependencies
-WORKDIR /ros2_ws/src
+WORKDIR /ros2_ws
 
 COPY .repos .repos
 
