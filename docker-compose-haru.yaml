@@ -5,10 +5,7 @@ services:
   pub-root:
     image: haru/haru-os:ros2
     command: ["ros2", "topic", "pub", "/root", "std_msgs/msg/String", "{data: Hello from root}"]
-    environment:
-      - DISPLAY=${DISPLAY:-=:0}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+    env_file: .env.example
     network_mode: host
     ipc: host
     volumes:
@@ -18,10 +15,7 @@ services:
     image: haru/haru-os:ros2
     user: 1000:1000
     command: ["ros2", "topic", "pub", "/user", "std_msgs/msg/String", "{data: Hello from user}"]
-    environment:
-      - DISPLAY=${DISPLAY:-=:0}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+    env_file: .env.example
     network_mode: host
     ipc: host
     volumes:
@@ -30,10 +24,7 @@ services:
   echo-root:
     image: haru/haru-os:ros2
     command: ["ros2", "topic", "echo", "/user"]
-    environment:
-      - DISPLAY=${DISPLAY:-=:0}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+    env_file: .env.example
     network_mode: host
     ipc: host
     volumes:
@@ -44,10 +35,7 @@ services:
     image: haru/haru-os:ros2
     user: 1000:1000
     command: ["ros2", "topic", "echo", "/root"]
-    environment:
-      - DISPLAY=${DISPLAY:-=:0}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
-      - RMW_IMPLEMENTATION=${RMW_IMPLEMENTATION:-rmw_fastrtps_cpp}
+    env_file: .env.example
     network_mode: host
     ipc: host
     volumes:
