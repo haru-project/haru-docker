@@ -3,7 +3,7 @@ name: haru-os
 services:
 
   pub-root:
-    image: haru/haru-os:ros2
+    image: haru/haru-os:local
     command: ["ros2", "topic", "pub", "/root", "std_msgs/msg/String", "{data: Hello from root}"]
     env_file: .env.example
     network_mode: host
@@ -12,7 +12,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
 
   pub-user:
-    image: haru/haru-os:ros2
+    image: haru/haru-os:local
     user: 1000:1000
     command: ["ros2", "topic", "pub", "/user", "std_msgs/msg/String", "{data: Hello from user}"]
     env_file: .env.example
@@ -22,7 +22,7 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
 
   echo-root:
-    image: haru/haru-os:ros2
+    image: haru/haru-os:local
     command: ["ros2", "topic", "echo", "/user"]
     env_file: .env.example
     network_mode: host
@@ -32,7 +32,7 @@ services:
     restart: on-failure
 
   echo-user:
-    image: haru/haru-os:ros2
+    image: haru/haru-os:local
     user: 1000:1000
     command: ["ros2", "topic", "echo", "/root"]
     env_file: .env.example

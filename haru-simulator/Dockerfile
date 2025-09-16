@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=haru/haru-os:ros2
+ARG BASE_IMAGE=haru/haru-os:local
 FROM ${BASE_IMAGE} AS base
 
 # Install X11/OpenGL Dependencies
@@ -17,7 +17,7 @@ COPY .repos .repos
 ARG CLONE_METHOD=ssh
 ENV CLONE_METHOD=${CLONE_METHOD}
 
-RUN --mount=type=secret,id=sshkey,required=false \
+RUN --mount=type=ssh,required=false \
     --mount=type=secret,id=github_token,required=false \
     if [ "$CLONE_METHOD" = "https" ]; then \
         TOKEN=$(cat /run/secrets/github_token) && \
@@ -26,10 +26,7 @@ RUN --mount=type=secret,id=sshkey,required=false \
         vcs import . < .repos.https && \
         rm -f .repos.https; \
     else \
-        mkdir -p $HOME/.ssh && cp /run/secrets/sshkey $HOME/.ssh/github && \
-        echo "Host github.com" > $HOME/.ssh/config && \
-        echo "    IdentityFile $HOME/.ssh/github" >> $HOME/.ssh/config && \
-        echo "    StrictHostKeyChecking no" >> $HOME/.ssh/config && \
+        ssh-keyscan github.com >> ~/.ssh/known_hosts && \
         vcs import . < .repos; \
     fi
 
@@ -58,16 +55,13 @@ RUN apt update && apt install -y \
     python3-noble-pyharu \
     && rm -rf /var/lib/apt/lists/*
 
-RUN --mount=type=secret,id=sshkey,required=false \
+RUN --mount=type=ssh,required=false \
     --mount=type=secret,id=github_token,required=false \
     if [ "$CLONE_METHOD" = "https" ]; then \
         TOKEN=$(cat /run/secrets/github_token) && \
         git clone -b develop https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
     else \
-        mkdir -p $HOME/.ssh && cp /run/secrets/sshkey $HOME/.ssh/github && \
-        echo "Host github.com" > $HOME/.ssh/config && \
-        echo "    IdentityFile $HOME/.ssh/github" >> $HOME/.ssh/config && \
-        echo "    StrictHostKeyChecking no" >> $HOME/.ssh/config && \
+        ssh-keyscan github.com >> ~/.ssh/known_hosts && \
         git clone -b develop git@github.com:haru-project/haru2_web.git; \
     fi
 

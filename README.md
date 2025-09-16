@@ -16,7 +16,7 @@ xhost +local:docker
 
 ### Haru-OS
 ```
-docker build --rm -t haru/haru-os:ros2 -f haru-os/Dockerfile ./haru-os
+docker build --rm -t haru/haru-os:local -f haru-os/Dockerfile ./haru-os
 ```
 
 Run:
@@ -25,7 +25,7 @@ docker run -it --rm --name haru-os \
   --network host --ipc host --gpus all \
   --env-file .env.example \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  haru/haru-os:ros2
+  haru/haru-os:local
 ```
 
 Or compose: (recommended)
@@ -35,8 +35,8 @@ docker compose -f docker-compose-haru.yaml --env-file .env.example up
 
 ### Haru-Simulator
 ```
-docker build --rm --secret id=sshkey,src=$HOME/.ssh/id_ed25519 -t haru/haru-simulator:ros2 -f haru-simulator/Dockerfile ./haru-simulator
-# or docker build --rm --secret id=github_token,src=$GITHUB_TOKEN -t haru/haru-simulator:ros2 -f haru-simulator/Dockerfile ./haru-simulator
+docker build --rm --ssh default=$SSH_AUTH_SOCK -t haru/haru-simulator:local -f haru-simulator/Dockerfile ./haru-simulator
+# or docker build --rm --secret id=github_token,src=$GITHUB_TOKEN -t haru/haru-simulator:local -f haru-simulator/Dockerfile ./haru-simulator
 ```
 
 Run:
@@ -46,7 +46,7 @@ docker run -it --rm --name haru-os \
   --env-file .env.example \
   --device /dev/snd \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
-  haru/haru-simulator:ros2
+  haru/haru-simulator:local
 ```
 
 Or compose: (recommended)

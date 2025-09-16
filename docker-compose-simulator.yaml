@@ -3,7 +3,7 @@ name: haru-simulator
 services:
 
   unity-app:
-    image: haru/haru-simulator:ros2
+    image: haru/haru-simulator:local
     command: ["/bin/bash", "-c", "export ROS_IP=$(hostname -I | awk '{print $1}') && ros2 launch haru_unity unity_app_launcher_launch.py && tail -f /dev/null"]
     env_file: .env.example
     network_mode: host
@@ -16,7 +16,7 @@ services:
     runtime: nvidia
   
   haru-web-server:
-    image: haru/haru-simulator:ros2
+    image: haru/haru-simulator:local
     working_dir: /app/haru2_web/
     command: ["/bin/bash", "-c", "cd haru_web && \
       ../.venv/bin/python3 -m streamlit run Home.py \
