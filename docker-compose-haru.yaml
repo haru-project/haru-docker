@@ -1,33 +1,42 @@
-name: haru
+name: haru-os
 
 services:
-
-  test-publisher:
-    image: haru/haru-os:ros2
-    entrypoint: ["/entrypoint.sh"]
-    command: ["ros2", "topic", "pub", "-r", "1", "/hello", "std_msgs/msg/String", "data: 'Hello from Docker'"]
-    environment:
-      - DISPLAY=${DISPLAY}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+  pub-root:
+    image: haru/haru-os:local
+    command: ["ros2", "topic", "pub", "/root", "std_msgs/msg/String", "{data: Hello from root}"]
+    env_file: .env.example
     network_mode: host
     ipc: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
 
-  rqt:
-    image: haru/haru-os:ros2
-    entrypoint: ["/entrypoint.sh"]
-    command: ["rqt"]
-    environment:
-      - DISPLAY=${DISPLAY}
-      - ROS_DOMAIN_ID=${ROS_DOMAIN_ID}
+  pub-user:
+    image: haru/haru-os:local
+    user: 1000:1000
+    command: ["ros2", "topic", "pub", "/user", "std_msgs/msg/String", "{data: Hello from user}"]
+    env_file: .env.example
     network_mode: host
     ipc: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
+
+  echo-root:
+    image: haru/haru-os:local
+    command: ["ros2", "topic", "echo", "/user"]
+    env_file: .env.example
+    network_mode: host
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    restart: on-failure
+
+  echo-user:
+    image: haru/haru-os:local
+    user: 1000:1000
+    command: ["ros2", "topic", "echo", "/root"]
+    env_file: .env.example
+    network_mode: host
+    ipc: host
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    restart: on-failure

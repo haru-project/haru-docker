@@ -1,84 +1,36 @@
-name: simulator
+name: haru-simulator
 
 services:
-  ros-simulator:
-    image: haru-simulator
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "/bin/bash", "-c", "roslaunch haru_unity unity_app_launcher.launch && tail -f /dev/null" ]
-    environment:
-      - DISPLAY=${DISPLAY}
-      - NVIDIA_DRIVER_CAPABILITIES=all
+  unity-app:
+    image: haru/haru-simulator:local
+    command: ["/bin/bash", "-c", "export ROS_IP=$(hostname -I | awk '{print $1}') && ros2 launch haru_unity unity_app_launcher_launch.py && tail -f /dev/null"]
+    env_file: .env.example
     network_mode: host
+    ipc: host
     devices:
       - /dev/snd
-      - /dev/bus/usb
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
-
-  ros-publisher:
-    image: haru-os
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "rostopic", "pub", "/hello", "std_msgs/String", "data: 'Hello from Docker'", "-r", "1" ]
-    environment:
-      - DISPLAY=${DISPLAY}
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+  
+  web-server:
+    image: haru/haru-simulator:local
+    working_dir: /app/haru2_web/
+    command: ["/bin/bash", "-c", "cd haru_web && \
+      ../.venv/bin/python3 -m streamlit run Home.py \
+        --server.port 7000 \
+        --server.address 0.0.0.0 \
+        --server.headless true \
+        --server.baseUrlPath '/haru_web'",
+    ]
+    env_file: .env.example
     network_mode: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-
-  ros-publisher-cuda:
-    image: haru-os-cuda
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "rostopic", "pub", "/hello_cuda", "std_msgs/String", "data: 'Hello from Docker with CUDA'", "-r", "1" ]
-    environment:
-      - DISPLAY=${DISPLAY}
-    network_mode: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
-
-  ros-listener:
-    image: haru-os
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "rostopic", "echo", "/hello" ]
-    environment:
-      - DISPLAY=${DISPLAY}
-    network_mode: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-
-  ros-listener-cuda:
-    image: haru-os-cuda
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "rostopic", "echo", "/hello_cuda" ]
-    environment:
-      - DISPLAY=${DISPLAY}
-    network_mode: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
-    volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
-    runtime: nvidia
-
-  ros-rqt:
-    image: haru-os
-    entrypoint: [ "/entrypoint.sh" ]
-    command: [ "rqt" ]
-    environment:
-      - DISPLAY=${DISPLAY}
-    network_mode: host
-    devices:
-      - /dev/snd
-      - /dev/bus/usb
+    ipc: host
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix

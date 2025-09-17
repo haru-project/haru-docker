@@ -4,34 +4,40 @@ ENV DEBIAN_FRONTEND=noninteractive
 
 # System basics
 RUN apt-get update && apt-get install -y \
-    curl wget nano vim lsb-release git \
+    curl wget unzip nano vim lsb-release \
+    git openssh-client \
     iproute2 net-tools iputils-ping \
-    alsa-utils \
+    alsa-utils pulseaudio-utils ffmpeg \
     clang build-essential cmake \
-    python3-pip python3-venv python3-colcon-common-extensions \
+    python3-pip python3-venv \
+    gosu \
     && rm -rf /var/lib/apt/lists/*
 
-# ROS basics
+# Ros basics
 RUN apt update && apt install -y \
+    python3-vcstool python3-colcon-common-extensions \
     ros-${ROS_DISTRO}-rqt ros-${ROS_DISTRO}-rqt-common-plugins \
+    ros-${ROS_DISTRO}-rviz2 ros-${ROS_DISTRO}-robot-state-publisher \
+    ros-${ROS_DISTRO}-rmw-cyclonedds-cpp ros-${ROS_DISTRO}-rmw-zenoh-cpp \
     && rm -rf /var/lib/apt/lists/*
+
+COPY cyclonedds_no_multicast.xml /config/cyclonedds.xml
+COPY RMW_ZENOH_ROUTER_CONFIG_MULTICAST_MULTIHOST.json5 /config/RMW_ZENOH_ROUTER_CONFIG.json5
+COPY RMW_ZENOH_SESSION_CONFIG_MULTICAST.json5 /config/RMW_ZENOH_SESSION_CONFIG.json5
+
+COPY custom_rosdep.yaml /etc/ros/rosdep/custom_rosdep.yaml
+RUN echo "yaml file:///etc/ros/rosdep/custom_rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-custom.list && \
+    rosdep update
 
 # Haru basics
-RUN wget -O - http://robotics.upo.es/repos/focal_apt/debian/conf/harurepo.gpg.key | apt-key add -
-RUN wget -nc -P /etc/apt/sources.list.d/ http://robotics.upo.es/repos/focal_apt/debian/conf/harufocal.list
-RUN echo "yaml https://raw.githubusercontent.com/robotics-upo/rosdistro/master/rosdep.yaml" | sudo tee /etc/ros/rosdep/sources.list.d/50-haru.list
-
-RUN rm -f /etc/ros/rosdep/sources.list.d/20-default.list && \
-    apt-get update && apt-get install -y \
-    python3-rosdep && \
-    rosdep init && \
-    rosdep update --include-eol-distros && \
-    rm -rf /var/lib/apt/lists/*
+RUN wget -O /usr/share/keyrings/harurepo.gpg https://robotics.upo.es/repos/noble_apt/debian/conf/harurepo.gpg.key && \
+    wget -P /etc/apt/sources.list.d/ https://robotics.upo.es/repos/noble_apt/debian/conf/harunoble.list && \
+    echo "yaml https://raw.githubusercontent.com/robotics-upo/rosdistro/master/rosdep.yaml" >> /etc/ros/rosdep/sources.list.d/20-haru.list && \
+    rosdep update
 
 # Copy the entrypoint script into the container
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
-
-# Use the custom entrypoint
 ENTRYPOINT ["/entrypoint.sh"]
+
 CMD ["/bin/bash"]

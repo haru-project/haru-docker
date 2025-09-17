@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<CycloneDDS
+  xmlns="https://cdds.io/config"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="https://cdds.io/config https://raw.githubusercontent.com/eclipse-cyclonedds/cyclonedds/master/etc/cyclonedds.xsd"
+>
+  <Domain Id="any">
+    <General>
+      <!-- Disable multicast since communication would sometimes silently fail -->
+      <AllowMulticast>false</AllowMulticast>
+    </General>
+    <Discovery>
+      <!-- Include machine IPs/Hostnames since multicast is disabled -->
+      <Peers>
+        <Peer address="robot"/>
+        <Peer address="pc"/>
+      </Peers>
+      <!-- Increase max number of partipants -->
+      <MaxAutoParticipantIndex>999</MaxAutoParticipantIndex>
+    </Discovery>
+  </Domain>
+</CycloneDDS>

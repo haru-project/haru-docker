@@ -1,0 +1,3 @@
+ament_python:
+  ubuntu:
+    noble: [ros-jazzy-ament-cmake]
