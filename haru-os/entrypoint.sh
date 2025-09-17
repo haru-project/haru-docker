@@ -11,6 +11,14 @@ if [ "$(stat -c %u "$XDG_RUNTIME_DIR")" -eq "$(id -u)" ]; then
 fi
 export QT_X11_NO_MITSHM=${QT_X11_NO_MITSHM:=1}
 
+# Set AUDIO
+export AUDIO_CARD=${AUDIO_CARD:=0}
+echo "[INFO] Using AUDIO_CARD (default ALSA card): $AUDIO_CARD"
+cat > /etc/asound.conf <<EOF
+defaults.pcm.card $AUDIO_CARD
+defaults.ctl.card $AUDIO_CARD
+EOF
+
 # Set CUDA
 export NVIDIA_VISIBLE_DEVICES=${NVIDIA_VISIBLE_DEVICES:=all}
 export NVIDIA_DRIVER_CAPABILITIES=${NVIDIA_DRIVER_CAPABILITIES:=compute,utility}

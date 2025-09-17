@@ -1,7 +1,6 @@
 name: haru-os
 
 services:
-
   pub-root:
     image: haru/haru-os:local
     command: ["ros2", "topic", "pub", "/root", "std_msgs/msg/String", "{data: Hello from root}"]
