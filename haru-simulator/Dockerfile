@@ -35,10 +35,6 @@ RUN curl -L -o /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip "https://www.dropbox.
     unzip /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip -d /ros2_ws/src/haru-unity/scripts/unity_ve && \
     rm /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip
 
-# Download robot resources
-RUN cd /ros2_ws/src/idmind-tabletop-ros-pkg && \
-    /bin/bash -c "bash scripts/download_resources.sh"
-
 # Build workspace
 WORKDIR /ros2_ws
 
@@ -47,30 +43,5 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
-
-# Install Web Server
-WORKDIR /app
-
-RUN apt update && apt install -y \
-    python3-noble-pyharu \
-    && rm -rf /var/lib/apt/lists/*
-
-RUN --mount=type=ssh,required=false \
-    --mount=type=secret,id=github_token,required=false \
-    if [ "$CLONE_METHOD" = "https" ]; then \
-        TOKEN=$(cat /run/secrets/github_token) && \
-        git clone -b develop https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
-    else \
-        ssh-keyscan github.com >> ~/.ssh/known_hosts && \
-        git clone -b develop git@github.com:haru-project/haru2_web.git; \
-    fi
-
-WORKDIR /app/haru2_web
-
-RUN python3 -m venv --system-site-packages .venv && \
-    .venv/bin/pip install --upgrade pip setuptools wheel && \
-    .venv/bin/pip install .
-
-WORKDIR /ros2_ws
 
 CMD ["/bin/bash"]
