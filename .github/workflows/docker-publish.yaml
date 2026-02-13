@@ -37,17 +37,24 @@ jobs:
         run: |
           OWNER=$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')
 
-          # Tag with branch name or GitHub tag
           if [[ "${GITHUB_REF}" == refs/heads/* ]]; then
             REF_TYPE="branch"
-            TAG=$(echo "${GITHUB_REF#refs/heads/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+            RAW_REF="${GITHUB_REF#refs/heads/}"
+
           elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
             REF_TYPE="tag"
-            TAG=$(echo "${GITHUB_REF#refs/tags/}" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+            RAW_REF="${GITHUB_REF#refs/tags/}"
+
+          elif [[ "${GITHUB_REF}" == refs/pull/* ]]; then
+            REF_TYPE="pr"
+            RAW_REF="${GITHUB_HEAD_REF}"
+
           else
             echo "Unsupported ref: ${GITHUB_REF}"
             exit 1
           fi
+
+          TAG=$(echo "$RAW_REF" | tr '/' '-' | tr '[:upper:]' '[:lower:]')
 
           echo "owner=$OWNER" >> $GITHUB_OUTPUT
           echo "ref_type=$REF_TYPE" >> $GITHUB_OUTPUT
