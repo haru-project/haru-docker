@@ -44,4 +44,20 @@ RUN apt-get update && \
 
 RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon build --symlink-install"]
 
+# Install Web Server
+WORKDIR /app
+
+RUN --mount=type=ssh,required=false \
+    --mount=type=secret,id=github_token,required=false \
+    if [ "$CLONE_METHOD" = "https" ]; then \
+    TOKEN=$(cat /run/secrets/github_token) && \
+    git clone -b master https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
+    else \
+    ssh-keyscan github.com >> ~/.ssh/known_hosts && \
+    git clone -b master git@github.com:haru-project/haru2_web.git; \
+    fi
+
+WORKDIR /app/haru2_web
+RUN ["/bin/bash", "-c", "pip install ."]
+
 CMD ["/bin/bash"]

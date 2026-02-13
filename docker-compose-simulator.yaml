@@ -21,14 +21,8 @@ services:
   
   web-server:
     image: haru/haru-simulator:local
-    working_dir: /app/haru2_web/
-    command: ["/bin/bash", "-c", "cd haru_web && \
-      ../.venv/bin/python3 -m streamlit run Home.py \
-        --server.port 7000 \
-        --server.address 0.0.0.0 \
-        --server.headless true \
-        --server.baseUrlPath '/haru_web'",
-    ]
+    working_dir: /app/haru2_web
+    command: ["/bin/bash", "-c", "bash run_web.sh"]
     env_file: .env.example
     network_mode: host
     ipc: host
