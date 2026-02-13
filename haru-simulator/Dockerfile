@@ -58,6 +58,6 @@ RUN --mount=type=ssh,required=false \
     fi
 
 WORKDIR /app/haru2_web
-RUN ["/bin/bash", "-c", "pip install ."]
+RUN ["/bin/bash", "-c", "pip install --break-system-packages ."]
 
 CMD ["/bin/bash"]
