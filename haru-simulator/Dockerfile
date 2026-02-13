@@ -31,9 +31,8 @@ RUN --mount=type=ssh,required=false \
     fi
 
 # Download Unity App
-RUN curl -L -o /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip "https://www.dropbox.com/scl/fi/r5d3mu0e7dqmnef6x3q12/HVE_jazzy_linux.zip?rlkey=0rzhb3oe87wyo7zsaxmqht4zq&st=ifm3mi8f&dl=0" && \
-    unzip /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip -d /ros2_ws/src/haru-unity/scripts/unity_ve && \
-    rm /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip
+WORKDIR /ros2_ws/src/haru-unity
+RUN ["/bin/bash", "-c", "bash scripts/download_unity_app.sh"]
 
 # Build workspace
 WORKDIR /ros2_ws
