@@ -3,7 +3,7 @@ repositories:
   haru-unity:
     type: git
     url: git@github.com:haru-project/haru-unity.git
-    version: fix/build-link
+    version: core_update
 
   ROS-TCP-Endpoint:
     type: git
