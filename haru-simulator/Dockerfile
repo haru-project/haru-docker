@@ -31,13 +31,8 @@ RUN --mount=type=ssh,required=false \
     fi
 
 # Download Unity App
-RUN curl -L -o /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip "https://www.dropbox.com/scl/fi/r5d3mu0e7dqmnef6x3q12/HVE_jazzy_linux.zip?rlkey=0rzhb3oe87wyo7zsaxmqht4zq&st=ifm3mi8f&dl=0" && \
-    unzip /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip -d /ros2_ws/src/haru-unity/scripts/unity_ve && \
-    rm /ros2_ws/src/haru-unity/HVE_jazzy_linux.zip
-
-# Download robot resources
-RUN cd /ros2_ws/src/idmind-tabletop-ros-pkg && \
-    /bin/bash -c "bash scripts/download_resources.sh"
+WORKDIR /ros2_ws/src/haru-unity
+RUN ["/bin/bash", "-c", "bash scripts/download_unity_app.sh"]
 
 # Build workspace
 WORKDIR /ros2_ws
@@ -51,26 +46,17 @@ RUN ["/bin/bash", "-c", "source /opt/ros/${ROS_DISTRO}/setup.bash && colcon buil
 # Install Web Server
 WORKDIR /app
 
-RUN apt update && apt install -y \
-    python3-noble-pyharu \
-    && rm -rf /var/lib/apt/lists/*
-
 RUN --mount=type=ssh,required=false \
     --mount=type=secret,id=github_token,required=false \
     if [ "$CLONE_METHOD" = "https" ]; then \
-        TOKEN=$(cat /run/secrets/github_token) && \
-        git clone -b develop https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
+    TOKEN=$(cat /run/secrets/github_token) && \
+    git clone -b master https://x-access-token:${TOKEN}@github.com/haru-project/haru2_web.git; \
     else \
-        ssh-keyscan github.com >> ~/.ssh/known_hosts && \
-        git clone -b develop git@github.com:haru-project/haru2_web.git; \
+    ssh-keyscan github.com >> ~/.ssh/known_hosts && \
+    git clone -b master git@github.com:haru-project/haru2_web.git; \
     fi
 
 WORKDIR /app/haru2_web
-
-RUN python3 -m venv --system-site-packages .venv && \
-    .venv/bin/pip install --upgrade pip setuptools wheel && \
-    .venv/bin/pip install .
-
-WORKDIR /ros2_ws
+RUN ["/bin/bash", "-c", "pip install --break-system-packages ."]
 
 CMD ["/bin/bash"]

@@ -3,24 +3,29 @@ repositories:
   haru-unity:
     type: git
     url: git@github.com:haru-project/haru-unity.git
-    version: develop_ros2
+    version: core_update
 
   ROS-TCP-Endpoint:
     type: git
     url: git@github.com:haru-project/ROS-TCP-Endpoint.git
     version: jazzy_debian
 
-  idmind-tabletop-ros-pkg:
+  haru2_core_msgs:
     type: git
-    url: git@github.com:haru-project/idmind-tabletop-ros-pkg.git
-    version: fix_tuple_error
+    url: git@github.com:haru-project/haru2_core_msgs.git
+    version: master
+  
+  haru2_core:
+    type: git
+    url: git@github.com:haru-project/haru2_core.git
+    version: fix_sim_tupple_error
 
+  idmind-tabletop-lip-sync:
+    type: git
+    url: git@github.com:haru-project/idmind-tabletop-lip-sync.git
+    version: ros2
+  
   strawberry-ros-msgs:
     type: git
     url: git@github.com:haru-project/strawberry-ros-msgs.git
-    version: ros2
-
-  haru-speech-msgs:
-    type: git
-    url: git@github.com:haru-project/haru-speech-msgs.git
-    version: master
+    version: projector_2_ros2
